@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+
+    <h1 class="text-3xl font-bold mb-6">Scan Activity (Last 7 Days)</h1>
+
+    <!-- Chart -->
+    <canvas id="scanChart" class="w-full h-64"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById('scanChart');
+
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: {{ chart_labels|safe }},
+                datasets: [{
+                    label: "Scans Per Day",
+                    data: {{ chart_data|safe }},
+                    borderWidth: 3,
+                    borderColor: "green",
+                    backgroundColor: "rgba(0, 128, 0, 0.2)",
+                    tension: 0.3,
+                }]
+            },
+            options: { responsive: true }
+        });
+    </script>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-6 mt-10">
+        <div class="p-6 border rounded-lg text-center">
+            <p class="text-xl font-bold">Total Scans</p>
+            <p class="text-3xl text-green-600 font-extrabold">{{ total_scans }}</p>
+        </div>
+
+        <div class="p-6 border rounded-lg text-center">
+            <p class="text-xl font-bold">Valid Medicines</p>
+            <p class="text-3xl text-blue-600 font-extrabold">{{ valid_count }}</p>
+        </div>
+
+        <div class="p-6 border rounded-lg text-center">
+            <p class="text-xl font-bold">Expired Medicines</p>
+            <p class="text-3xl text-red-600 font-extrabold">{{ expired_count }}</p>
+        </div>
+    </div>
+
+    <!-- Download Btn -->
+    <div class="mt-10 text-center">
+        <a href="/weekly_report_pdf" class="glass-btn">
+            Download Weekly PDF Report
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto">
+
+  <!-- Header + Daily Report Button -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-extrabold">Scan History</h1>
+
+    <a href="/daily_report"
+       class="bg-green-600 text-white px-4 py-2 rounded-xl shadow hover:bg-green-700 transition">
+       📄 Download Today's Report
+    </a>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-lg">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">#</th>
+            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Preview</th>
+            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Expiry</th>
+            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Damage</th>
+            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Time</th>
+            <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody class="bg-white divide-y divide-gray-100">
+          {% for s in scans %}
+          <tr>
+            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{{ s.id }}</td>
+
+            <td class="px-4 py-3">
+              <div class="flex items-center space-x-4">
+                <img src="{{ url_for('processed_file', filename=s.processed_filename) }}"
+                     alt="thumb"
+                     class="w-28 h-16 object-cover rounded-md shadow-sm" />
+                <div class="text-sm text-gray-600">{{ s.filename }}</div>
+              </div>
+            </td>
+
+            <td class="px-4 py-4 text-sm">
+              <div class="font-semibold">{{ s.expiry_status }}</div>
+              <div class="text-xs text-gray-500">{{ s.expiry_date }}</div>
+            </td>
+
+            <td class="px-4 py-4 text-sm">
+              <div>{{ s.damage_status }}</div>
+            </td>
+
+            <td class="px-4 py-4 text-sm text-gray-500">
+              {{ s.timestamp }}
+            </td>
+
+            <td class="px-4 py-4 text-right">
+              <a href="{{ url_for('processed_file', filename=s.processed_filename) }}"
+                 target="_blank"
+                 class="glass-btn-subtle">
+                Open
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-between items-center">
+      <div class="text-sm text-gray-500">
+        Showing page {{ page }} of {{ total_pages }} ({{ total }} scans)
+      </div>
+
+      <div class="space-x-2">
+        {% if page > 1 %}
+        <a href="{{ url_for('history', page=page-1, per_page=per_page) }}" class="glass-btn-subtle">
+          Previous
+        </a>
+        {% endif %}
+
+        {% if page < total_pages %}
+        <a href="{{ url_for('history', page=page+1, per_page=per_page) }}" class="glass-btn">
+          Next
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+

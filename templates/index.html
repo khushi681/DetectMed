@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="text-center">
+
+    <!-- Title -->
+    <h1 class="text-5xl font-extrabold text-gray-800 mb-4 tracking-wide">
+        DetectMed: AI Medicine Scanner
+    </h1>
+
+    <!-- Tagline -->
+    <p class="text-xl text-gray-600 mb-8">
+        Scan • Detect • Prevent — Your AI assistant for safe medicine usage
+    </p>
+
+    <!-- REALISTIC STATIC SCANNER IMAGE -->
+    <div class="flex justify-center mb-10">
+        <img src="{{ url_for('static', filename='images/heroimg.png') }}"
+             alt="heroimg"
+             class="w-80 rounded-xl shadow-lg">
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="flex justify-center space-x-6">
+
+        <!-- Upload -->
+        <form action="/process" method="POST" enctype="multipart/form-data">
+            <label class="cursor-pointer">
+                <div class="glass-btn">Upload Medicine Image</div>
+                <input type="file" name="file" class="hidden" onchange="this.form.submit()" />
+            </label>
+        </form>
+
+        <!-- Capture -->
+        <button id="openCamBtn" class="glass-btn">
+            Capture Image
+        </button>
+
+    </div>
+
+    <!-- CAMERA PREVIEW -->
+    <div class="flex flex-col items-center mt-10">
+        <video id="video" autoplay playsinline class="hidden w-80 rounded-xl shadow-lg"></video>
+
+        <button id="captureBtn" class="hidden glass-btn-subtle mt-4">
+            Capture Now
+        </button>
+
+        <canvas id="canvas" width="320" height="240" class="hidden mt-4"></canvas>
+
+        <form id="captureForm" action="/capture" method="POST">
+            <input type="hidden" name="imageData" id="imageData">
+        </form>
+    </div>
+
+</div>
+
+<!-- CAMERA SCRIPT -->
+<script>
+const video = document.getElementById("video");
+const openCamBtn = document.getElementById("openCamBtn");
+const captureBtn = document.getElementById("captureBtn");
+const canvas = document.getElementById("canvas");
+const imageDataInput = document.getElementById("imageData");
+
+openCamBtn.onclick = async () => {
+    try {
+        video.classList.remove("hidden");
+        captureBtn.classList.remove("hidden");
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+
+    } catch (err) {
+        alert("Camera access denied!");
+    }
+};
+
+captureBtn.onclick = () => {
+    const ctx = canvas.getContext("2d");
+    canvas.classList.remove("hidden");
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const dataURL = canvas.toDataURL("image/png");
+    imageDataInput.value = dataURL;
+
+    document.getElementById("captureForm").submit();
+};
+</script>
+
+{% endblock %}
+
+
+        
